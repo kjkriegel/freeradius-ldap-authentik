@@ -1,12 +1,29 @@
 Introduction
 ============
 
-FreeRadius server configured to use an OpenLDAP backend. Primarily intended to
-be used as a Cisco IPSEC VPN AAA server.
+FreeRadius server configured to use an Authentik LDAP provider. Can be used as a UniFi WiFi or VPN Radius authentication backend.
 
 Optional support is provided so that users must be a member of a certain LDAP
 group in order to receive RADIUS access. If this is not used, all users which
 can authenticate successfully using LDAP will be granted RADIUS access.
+
+Authentik setup
+====================================
+First an LDAP outpost is necessary, either in docker-compose or managed by Authentik using local docker socket. I recommend creating a service user in authentik.
+
+For a basic radius server, this will get you up and running. For authenticating with MsChapv2 (UniFi VPN and WiFi auth), additional setup is necessary in Authentik:
+
+In the flow `default-password-change` (to adapt if you have a custom one), you'd go to "Stage Bindings", expand the `default-password-change-write` binding, click `Create and bind Policy`, select `Expression Policy`, give it a meaningful name, and use the following [expression provided](https://gist.github.com/jcrapuchettes/830c99982e391c858f5b7eb066c02749). Your users will have to change their password for them to be able to use the output, for other solutions during the auth flow, [see the thread here](https://github.com/goauthentik/authentik/issues/8768#issuecomment-2383738234).
+
+Many thanks to [@jcrapuchettes](https://github.com/jcrapuchettes) who already spent his time and effort.
+
+Custom certificate
+====================================
+Mount the directory `/etc/raddb/certs/rsa` where you have `server.pem` and `server.key` files with your own certificate. 
+Please include a `ca.pem` with your CA public certificate in the same directory.
+Set `EAP_PRIVATE_KEY_PASSWORD` to match your private key password.
+
+In case of permission problems, run `chmod 664 *` in the directory where your certificates are stored.
 
 Environment Variables
 =====================
@@ -35,7 +52,10 @@ Example Docker Compose Configuration
       ports:
         - "1812:1812/udp"
         - "1813:1813/udp"
+      volumes:
+        - ./custom-cert:/etc/raddb/certs/rsa
       environment:
+        #- RADIUSD_ARGS=-x -f -l stdout
         - "LDAP_HOST=ldap.example.com"
         - "LDAP_USER=cn=admin,dc=example,dc=com"
         - "LDAP_PASS=adminpassword"
@@ -44,5 +64,6 @@ Example Docker Compose Configuration
         - "LDAP_GROUP_BASEDN=ou=Groups,dc=example,dc=com"
         - "LDAP_RADIUS_ACCESS_GROUP=vpnaccess"
         - "RADIUS_CLIENT_CREDENTIALS=1.2.3.4:password1234,5.6.7.8:password5678"
+        #- EAP_PRIVATE_KEY_PASSWORD=whatever
       mem_limit: "1g"
       restart: "always"
