@@ -33,13 +33,20 @@ ldap_subst "@LDAP_CLIENT_BASEDN@" "${LDAP_CLIENT_BASEDN}"
 # enable ldap
 ln -s /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
 
+# disable eap
+#rm /etc/raddb/mods-enabled/eap
+
 # configure the default site for ldap
-sed -i -e 's/-ldap/ldap/g' /etc/raddb/sites-available/default
+# enable ldap with auth bind for authentik
+sed -i -e 's/-ldap/ldap\n\n        if ((ok || updated) \&\& User-Password) {\n\n        update {\n\n        control:Auth-Type := ldap\n\n        }\n\n        }/g' /etc/raddb/sites-available/default
+
 sed -i -e '/^#[[:space:]]*Auth-Type LDAP {$/{N;N;s/#[[:space:]]*Auth-Type LDAP {\n#[[:space:]]*ldap\n#[[:space:]]*}/        Auth-Type LDAP {\n                ldap\n        }/}' /etc/raddb/sites-available/default
 sed -i -e 's/^#[[:space:]]*ldap/        ldap/g' /etc/raddb/sites-available/default
 
 # configure the inner-tunnel site for ldap
-sed -i -e 's/-ldap/ldap/g' /etc/raddb/sites-available/inner-tunnel
+# enable ldap with auth bind for authentik
+sed -i -e 's/-ldap/ldap\n\n        if ((ok || updated) \&\& User-Password) {\n\n        update {\n\n        control:Auth-Type := ldap\n\n        }\n\n        }/g' /etc/raddb/sites-available/inner-tunnel
+
 sed -i -e '/^#[[:space:]]*Auth-Type LDAP {$/{N;N;s/#[[:space:]]*Auth-Type LDAP {\n#[[:space:]]*ldap\n#[[:space:]]*}/        Auth-Type LDAP {\n                ldap\n        }/}' /etc/raddb/sites-available/inner-tunnel
 sed -i -e 's/^#[[:space:]]*ldap/        ldap/g' /etc/raddb/sites-available/inner-tunnel
 
@@ -87,6 +94,7 @@ client $CLIENT {
     shortname = $CLIENT
     ipaddr = $CLIENT
     nas_type = other
+    require_message_authenticator = no
 }
 EOF
 done

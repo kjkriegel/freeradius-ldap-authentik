@@ -1,0 +1,81 @@
+### EAP
+eap {
+	default_eap_type = peap
+	timer_expire     = 60
+	ignore_unknown_eap_types = no
+	cisco_accounting_username_bug = no
+	max_sessions = 4096
+
+	tls-config tls-common {
+		private_key_password = whatever
+		private_key_file = ${certdir}/rsa/server.key
+		certificate_file = ${certdir}/rsa/server.pem
+		ca_path = ${confdir}/certs
+		ca_file = ${ca_path}/rsa/ca.pem
+		dh_file = ${certdir}/dh
+		random_file = /dev/urandom
+		fragment_size = 1024
+		include_length = yes
+		check_crl = no
+		cipher_list = "DEFAULT"
+		cipher_server_preference = no
+#		disable_tlsv1_2 = no
+		ecdh_curve = "prime256v1"
+		tls_min_version = "1.2"
+		cache {
+			enable = yes
+			lifetime = 24
+			max_entries = 255
+			#name = "EAP module"
+			#persist_dir = "/tlscache"
+		}
+		verify {
+	#		skip_if_ocsp_ok = no
+	#		tmpdir = /tmp/radiusd
+	#		client = "/path/to/openssl verify -CApath ${..ca_path} %{TLS-Client-Cert-Filename}"
+		}
+		ocsp {
+			enable = no
+			override_cert_url = no
+			url = "http://127.0.0.1/ocsp/"
+			# use_nonce = yes
+			# timeout = 0
+			# softfail = no
+		}
+	}
+	tls {
+		tls = tls-common
+	#	virtual_server = check-eap-tls
+	}
+	ttls {
+		tls = tls-common
+		default_eap_type = mschapv2
+		copy_request_to_tunnel = no
+		include_length = yes
+	#	require_client_cert = yes
+		virtual_server = "inner-tunnel-ttls"
+		#use_tunneled_reply is deprecated, new method happens in virtual-server
+	}	### end ttls
+	peap {
+		tls = tls-common
+		default_eap_type = mschapv2
+		copy_request_to_tunnel = no
+	#	proxy_tunneled_request_as_eap = yes
+	#	require_client_cert = yes
+### MS SoH Server is disabled ###
+
+		virtual_server = "inner-tunnel-peap"
+		#use_tunneled_reply is deprecated, new method happens in virtual-server
+	}
+	mschapv2 {
+#		send_error = no
+#		identity = "FreeRADIUS"
+	}
+#	fast {
+#		tls = tls-common
+#		pac_lifetime = 604800
+#		authority_identity = "1234"
+#		pac_opaque_key = "0123456789abcdef0123456789ABCDEF"
+#		virtual_server = inner-tunnel
+#	}
+}

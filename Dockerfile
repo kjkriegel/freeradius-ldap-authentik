@@ -1,5 +1,5 @@
-FROM centos:7
-MAINTAINER Ira W. Snyder <isnyder@lcogt.net>
+FROM rockylinux:9.3
+MAINTAINER Victor Vlasák <developer@vvlasy.cz>
 
 ENTRYPOINT [ "/init" ]
 
@@ -21,4 +21,5 @@ RUN curl -L https://github.com/krallin/tini/releases/download/${TINI_VERSION}/ti
 
 # Copy our configuration
 COPY ldap /etc/raddb/mods-available/
+COPY eap /etc/raddb/mods-available/
 COPY init /

@@ -71,6 +71,7 @@ ldap {
 	#  attribute ref.
 	update {
 		control:Password-With-Header	+= 'userPassword'
+                control:NT-Password		:= 'ipaNTHash'
 #		control:NT-Password		:= 'ntPassword'
 #		reply:Reply-Message		:= 'radiusReplyMessage'
 #		reply:Tunnel-Type		:= 'radiusTunnelType'
@@ -114,7 +115,8 @@ ldap {
 
 		#  Filter for user objects, should be specific enough
 		#  to identify a single user object.
-		filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
+		#filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
+		filter = "(&(objectclass=user)(cn=%{%{Stripped-User-Name}:-%{User-Name}})(ak-active=TRUE))"
 
 		#  Search scope, may be 'base', 'one', sub' or 'children'
 #		scope = 'sub'
@@ -170,7 +172,7 @@ ldap {
 		#  Filter to find group objects a user is a member of.
 		#  That is, group objects with attributes that
 		#  identify members (the inverse of membership_attribute).
-		membership_filter = "(|(member=%{control:Ldap-UserDn})(memberUid=%{%{Stripped-User-Name}:-%{User-Name}}))"
+		membership_filter = "(|(&(objectClass=GroupOfNames)(member=%{control:Ldap-UserDn}))(&(objectClass=GroupOfUniqueNames)(uniquemember=%{control:Ldap-UserDn})))"
 
 		#  The attribute in user objects which contain the names
 		#  or DNs of groups a user is a member of.
@@ -211,6 +213,7 @@ ldap {
 	profile {
 		#  Filter for RADIUS profile objects
 #		filter = "(objectclass=radiusprofile)"
+		filter = "(objectclass=user)"
 
 		#  The default profile applied to all users.
 #		default = "cn=radprofile,dc=example,dc=org"
@@ -318,7 +321,7 @@ ldap {
 	#
 	post-auth {
 		update {
-			description := "Authenticated at %S"
+			#description := "Authenticated at %S"
 		}
 	}
 
