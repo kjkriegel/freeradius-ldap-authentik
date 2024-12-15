@@ -23,6 +23,8 @@ Environment Variables
 - `LDAP_RADIUS_ACCESS_GROUP` - The LDAP group which users must belong to in order to have RADIUS access (optional) (default: "")
 - `RADIUS_CLIENT_CREDENTIALS` - The Freeradius server client credentials (comma separated "hostname:password" pairs, default: "")
 
+- `EAP_PRIVATE_KEY_PASSWORD` - Password for private key when custom cert is provided in volumes, when using self signed certificate, do not set this variable
+
 - `RADIUSD_ARGS` - Arguments to pass to radiusd (default: "-f -l stdout")
 
 Example Docker Compose Configuration

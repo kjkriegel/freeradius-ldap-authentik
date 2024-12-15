@@ -7,7 +7,7 @@ eap {
 	max_sessions = 4096
 
 	tls-config tls-common {
-		private_key_password = whatever
+		private_key_password = @EAP_PRIVATE_KEY_PASSWORD@
 		private_key_file = ${certdir}/rsa/server.key
 		certificate_file = ${certdir}/rsa/server.pem
 		ca_path = ${confdir}/certs

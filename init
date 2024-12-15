@@ -13,11 +13,17 @@ LDAP_CLIENT_BASEDN="${LDAP_CLIENT_BASEDN:-ou=Clients,dc=example,dc=com}"
 LDAP_RADIUS_ACCESS_GROUP="${LDAP_RADIUS_ACCESS_GROUP:-}"
 RADIUS_CLIENT_CREDENTIALS="${RADIUS_CLIENT_CREDENTIALS:-}"
 
+EAP_PRIVATE_KEY_PASSWORD="${EAP_PRIVATE_KEY_PASSWORD:-whatever}"
+
 # to turn on debugging, use "-x -f -l stdout"
 RADIUSD_ARGS="${RADIUSD_ARGS:--f -l stdout}"
 
 ldap_subst() {
     sed -i -e "s/${1}/${2}/g" /etc/raddb/mods-available/ldap
+}
+
+eap_subst() {
+    sed -i -e "s/${1}/${2}/g" /etc/raddb/mods-available/eap
 }
 
 # substitute variables into LDAP configuration file
@@ -30,11 +36,11 @@ ldap_subst "@LDAP_USER_BASEDN@" "${LDAP_USER_BASEDN}"
 ldap_subst "@LDAP_GROUP_BASEDN@" "${LDAP_GROUP_BASEDN}"
 ldap_subst "@LDAP_CLIENT_BASEDN@" "${LDAP_CLIENT_BASEDN}"
 
+# substitute variables into EAP configuration file
+eap_subst "@EAP_PRIVATE_KEY_PASSWORD@" "${EAP_PRIVATE_KEY_PASSWORD}"
+
 # enable ldap
 ln -s /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
-
-# disable eap
-#rm /etc/raddb/mods-enabled/eap
 
 # configure the default site for ldap
 # enable ldap with auth bind for authentik
