@@ -64,7 +64,7 @@ eap {
 	#	require_client_cert = yes
 ### MS SoH Server is disabled ###
 
-		virtual_server = "inner-tunnel-peap"
+		virtual_server = "inner-tunnel"
 		#use_tunneled_reply is deprecated, new method happens in virtual-server
 	}
 	mschapv2 {

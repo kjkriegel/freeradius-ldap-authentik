@@ -42,6 +42,9 @@ eap_subst "@EAP_PRIVATE_KEY_PASSWORD@" "${EAP_PRIVATE_KEY_PASSWORD}"
 # enable ldap
 ln -s /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
 
+#enable tunner
+ln -s /etc/raddb/sites-available/inner-tunnel /etc/raddb/sites-enabled/inner-tunnel
+
 # configure the default site for ldap
 # enable ldap with auth bind for authentik
 sed -i -e 's/-ldap/ldap\n\n        if ((ok || updated) \&\& User-Password) {\n\n        update {\n\n        control:Auth-Type := ldap\n\n        }\n\n        }/g' /etc/raddb/sites-available/default
