@@ -12,7 +12,7 @@ eap {
 		certificate_file = ${certdir}/rsa/server.pem
 		ca_path = ${confdir}/certs
 		ca_file = ${ca_path}/rsa/ca.pem
-		dh_file = ${certdir}/dh
+		#dh_file = ${certdir}/dh
 		random_file = /dev/urandom
 		fragment_size = 1024
 		include_length = yes
