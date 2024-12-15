@@ -105,5 +105,17 @@ client $CLIENT {
 EOF
 done
 
+# setup certificates if they are missing, server.pem and server.key
+if [[ ! -f /etc/raddb/certs/rsa/server.key ]] || [[ ! -f /etc/raddb/certs/rsa/server.pem ]]; then
+    echo "Generating self-signed certificate"
+    cd /etc/raddb/certs
+
+    ## remove everything in rsa folder
+    rm -rf rsa/*
+
+    make
+    cd $OLDPWD
+fi
+
 # run radiusd
 exec /usr/bin/tini -- /usr/sbin/radiusd $RADIUSD_ARGS
