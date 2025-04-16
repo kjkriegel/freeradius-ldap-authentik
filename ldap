@@ -97,7 +97,7 @@ ldap {
 		#  Unless a conversion between group name and group DN is
 		#  needed, there's no requirement for the group objects
 		#  referenced to actually exist.
-#		membership_attribute = "memberOf"
+		membership_attribute = "memberOf"
 
 		#  If cacheable_name or cacheable_dn are enabled,
 		#  all group information for the user will be
