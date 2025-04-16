@@ -121,5 +121,7 @@ if [[ ! -f /etc/raddb/certs/rsa/server.key ]] || [[ ! -f /etc/raddb/certs/rsa/se
     cd $OLDPWD
 fi
 
+echo "ATTRIBUTE   memberOf                3000    string" >> /etc/raddb/dictionary
+
 # run radiusd
 exec /usr/bin/tini -- /usr/sbin/radiusd $RADIUSD_ARGS
