@@ -72,11 +72,11 @@ ldap {
 	update {
 		control:Password-With-Header	+= 'userPassword'
                 control:NT-Password		:= 'ipaNTHash'
-#		control:NT-Password		:= 'ntPassword'
-#		reply:Reply-Message		:= 'radiusReplyMessage'
-#		reply:Tunnel-Type		:= 'radiusTunnelType'
-#		reply:Tunnel-Medium-Type	:= 'radiusTunnelMediumType'
-#		reply:Tunnel-Private-Group-ID	:= 'radiusTunnelPrivategroupId'
+		reply:Reply-Message		:= 'radiusReplyMessage'
+		reply:Tunnel-Type		:= 'radiusTunnelType'
+		reply:Tunnel-Medium-Type	:= 'radiusTunnelMediumType'
+		reply:Tunnel-Private-Group-ID	:= 'radiusTunnelPrivategroupId'
+		reply:memberOf                  += 'memberOf'
 
 		#  These are provided for backwards compatibility.
 		#  Where only a list is specified as the RADIUS attribute,
@@ -321,8 +321,13 @@ ldap {
 	#
 	post-auth {
 		update {
-			#description := "Authenticated at %S"
+			description := "Authenticated at %S"
 		}
+		foreach &reply:memberOf {
+	            if ("%{Foreach-Variable-0}" =~ /cn=Mikrotik-([^,=]+)/) {
+	               update reply { Mikrotik-Group += "%{1}" }
+	            }
+        	}
 	}
 
 	#
