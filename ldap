@@ -322,11 +322,6 @@ ldap {
 		update {
 			description := "Authenticated at %S"
 		}
-		foreach &reply:memberOf {
-            		if ("%{Foreach-Variable-0}" =~ /cn=Mikrotik-([^,=]+)/) {
-               			update reply { Mikrotik-Group += "%{1}" }
-            		}
-		}
 	}
 
 	#
