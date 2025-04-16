@@ -58,7 +58,7 @@ sed -i -e 's/-ldap/ldap\n\n        if ((ok || updated) \&\& User-Password) {\n\n
 
 sed -i -e '/^#[[:space:]]*Auth-Type LDAP {$/{N;N;s/#[[:space:]]*Auth-Type LDAP {\n#[[:space:]]*ldap\n#[[:space:]]*}/        Auth-Type LDAP {\n                ldap\n        }/}' /etc/raddb/sites-available/inner-tunnel
 sed -i -e 's/^#[[:space:]]*ldap/        ldap/g' /etc/raddb/sites-available/inner-tunnel
-sed -i -e '/post-auth {/a\		foreach &reply:memberOf {\n\t\t\tif ("%{Foreach-Variable-0}" =~ /cn=Mikrotik-([^,=]+)/) {\n\t\t\t\tupdate reply { Mikrotik-Group += "%{1}" }\n\t\t\t}\n\t\t}' /etc/raddb/sites-available/inner-tunnel
+#sed -i -e '/post-auth {/a\		foreach &reply:memberOf {\n\t\t\tif ("%{Foreach-Variable-0}" =~ /cn=Mikrotik-([^,=]+)/) {\n\t\t\t\tupdate reply { Mikrotik-Group += "%{1}" }\n\t\t\t}\n\t\t}' /etc/raddb/sites-available/inner-tunnel
 
 use_distro_provided_file() {
     # copy the distro-provided file to a new location if it
